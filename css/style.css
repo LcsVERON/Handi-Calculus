@@ -1,0 +1,311 @@
+/*
+ * Style de l'application (repris de docs/prototype.html).
+ * VOICE : calme, direct, une seule chose à la fois (FALC)
+ * COULEURS : blanc, encre sombre, bleu pour agir ; vert = oui, rouge = non
+ *            (toujours avec un mot et un symbole, jamais la couleur seule)
+ * TEXTE : Atkinson Hyperlegible, 20 px minimum
+ * TOUCHER : zones de 56 px minimum
+ */
+
+/* ---- Couleurs : thème clair ---- */
+:root {
+  color-scheme: light dark;
+  --bg: #ffffff;
+  --card: #f2f4f7;
+  --ink: #111418;
+  --soft: #4a5260;
+  --act: #1450d2;
+  --actInk: #ffffff;
+  --yes: #0f7a32;
+  --yesBg: #e3f6e9;
+  --no: #b3122a;
+  --noBg: #fde6e9;
+  --shadow: rgba(0, 0, 0, .12);
+}
+
+/* ---- Couleurs : thème sombre (suit le réglage du téléphone) ---- */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #121417;
+    --card: #1e2228;
+    --ink: #f3f5f7;
+    --soft: #c3cad5;
+    --act: #8fb0ff;      /* bleu clair + texte foncé : bien plus contrasté que du blanc sur bleu */
+    --actInk: #0b1020;
+    --yes: #5fd987;
+    --yesBg: #12301d;
+    --no: #ff8a9a;
+    --noBg: #3a1419;
+    --shadow: rgba(0, 0, 0, .5);
+  }
+}
+
+* { box-sizing: border-box; min-width: 0; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 20px/1.4 "Atkinson Hyperlegible", Verdana, Tahoma, "Segoe UI", Roboto, sans-serif;
+  overflow-x: clip;
+  -webkit-tap-highlight-color: transparent;
+}
+
+main {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: calc(16px + env(safe-area-inset-top)) 16px 150px;
+}
+
+button { font-family: inherit; }
+
+button:focus-visible,
+[tabindex]:focus-visible {
+  outline: 4px solid var(--act);
+  outline-offset: 3px;
+}
+
+/* Le titre reçoit le focus à chaque écran (pour les lecteurs d'écran) : pas de cadre. */
+h1[tabindex]:focus,
+h1[tabindex]:focus-visible { outline: none; }
+
+/* ---- Indicateur d'étapes ---- */
+.steps {
+  display: flex;
+  gap: 8px;
+  margin: 0 0 14px;
+  padding: 0;
+  list-style: none;
+}
+.steps li {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 56px;
+  padding: 6px 4px;
+  border-radius: 12px;
+  border: 3px solid transparent;
+  background: var(--card);
+  color: var(--soft);
+  font-size: 20px;
+  line-height: 1.15;
+  font-weight: 700;
+}
+/* Étape en cours : couleur ET bordure épaisse + soulignement (pas seulement la couleur) */
+.steps li.on {
+  background: var(--act);
+  color: var(--actInk);
+  border-color: var(--ink);
+  text-decoration: underline;
+  text-decoration-thickness: 3px;
+  text-underline-offset: 4px;
+}
+
+h1 { font-size: 34px; line-height: 1.1; margin: 6px 0 4px; }
+
+p.help { margin: 0 0 14px; color: var(--soft); }
+
+/* ---- Écran 1 : Mon argent ---- */
+.total {
+  font-size: 26px;
+  font-weight: 700;
+  margin: 10px 0 14px;
+  padding: 12px 16px;
+  border-radius: 16px;
+  background: var(--card);
+}
+.total b { font-size: 38px; white-space: nowrap; }
+
+.sec {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--soft);
+  margin: 18px 0 8px;
+}
+
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.grid.notes { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-bottom: 10px; }
+
+.cell {
+  position: relative;
+  background: var(--card);
+  border-radius: 16px;
+  padding: 8px 6px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.cell .add {
+  display: block;
+  width: 100%;
+  min-height: 56px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: inherit;
+  text-align: center;
+  cursor: pointer;
+}
+.cell .add:active svg { transform: scale(.94); }
+.cell svg { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+
+.badge {
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  min-width: 44px;
+  height: 44px;
+  padding: 0 8px;
+  border-radius: 22px;
+  border: 2px solid var(--bg);
+  background: var(--act);
+  color: var(--actInk);
+  font-weight: 700;
+  font-size: 22px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+.badge.show { display: flex; }
+
+.minus {
+  width: 100%;
+  height: 56px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--ink);
+  font-weight: 700;
+  font-size: 30px;
+  line-height: 1;
+  cursor: pointer;
+}
+.minus:disabled { opacity: .25; cursor: default; }
+
+/* ---- Barre du bas (gros boutons) ---- */
+.bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+  background: var(--bg);
+  box-shadow: 0 -6px 20px var(--shadow);
+}
+.bar .in { max-width: 640px; margin: 0 auto; display: flex; gap: 10px; }
+
+.big {
+  flex: 1;
+  min-height: 68px;
+  border: 0;
+  border-radius: 18px;
+  background: var(--act);
+  color: var(--actInk);
+  font-weight: 700;
+  font-size: 26px;
+  line-height: 1.1;
+  cursor: pointer;
+}
+.big:disabled { opacity: .35; cursor: default; }
+
+.ghost {
+  min-height: 68px;
+  min-width: 68px;
+  padding: 0 18px;
+  border: 3px solid var(--soft);
+  border-radius: 18px;
+  background: transparent;
+  color: var(--ink);
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+}
+.ghost.arrow { font-size: 36px; padding: 0 14px; }
+
+/* ---- Écran 2 : Le prix ---- */
+.price {
+  font-size: clamp(40px, 13vw, 56px);
+  font-weight: 700;
+  text-align: center;
+  padding: 18px 10px;
+  border-radius: 20px;
+  background: var(--card);
+  margin: 6px 0 14px;
+  white-space: nowrap;
+  letter-spacing: .02em;
+}
+.price small { font-size: .55em; color: var(--soft); }
+
+.pad { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.pad button {
+  height: 72px;
+  border: 0;
+  border-radius: 16px;
+  background: var(--card);
+  color: var(--ink);
+  font-weight: 700;
+  font-size: 34px;
+  line-height: 1;
+  cursor: pointer;
+}
+.pad button:active { background: var(--act); color: var(--actInk); }
+
+/* ---- Écran 3 : Réponse ---- */
+.answer {
+  border-radius: 24px;
+  padding: 22px 18px;
+  text-align: center;
+  margin: 6px 0 16px;
+  border: 4px solid currentColor;
+}
+.answer.yes { background: var(--yesBg); color: var(--yes); }
+.answer.no { background: var(--noBg); color: var(--no); }
+.answer .sign { font-size: 84px; line-height: 1; font-weight: 700; }
+.answer h1 { font-size: 48px; margin: 6px 0; }
+.answer p { margin: 4px 0; font-size: 24px; color: var(--ink); }
+.answer p b { white-space: nowrap; font-size: 32px; }
+
+.give {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  padding: 14px;
+  background: var(--card);
+  border-radius: 18px;
+}
+
+.back-money { margin-top: 14px; font-size: 24px; color: var(--ink); }
+.back-money b { white-space: nowrap; font-size: 32px; }
+
+.say {
+  margin: 14px auto 0;
+  display: block;
+  min-height: 56px;
+  padding: 0 22px;
+  border-radius: 14px;
+  border: 3px solid currentColor;
+  background: transparent;
+  color: inherit;
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.hide { display: none; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .answer { animation: pop .35s ease-out; }
+  @keyframes pop { from { transform: scale(.92); opacity: 0; } to { transform: none; opacity: 1; } }
+}
