@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<!-- Sécurité : la page ne peut charger que ses propres fichiers. Aucun appel vers internet. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'none'">
+<!-- Sécurité : la page ne peut charger que ses propres fichiers. Aucun chargement externe, aucun appel vers internet. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="color-scheme" content="light dark">
 <meta name="description" content="Savoir si j'ai assez d'argent pour payer, et quels billets et pièces donner.">
 <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
@@ -38,6 +38,11 @@
     <div class="grid" id="gE"></div>
     <h2 class="sec">Les petites pièces (centimes)</h2>
     <div class="grid" id="gC"></div>
+
+    <footer class="foot">
+      <p>🔒 Aucune donnée n'est collectée. Tout reste sur ce téléphone.</p>
+      <p><a href="mentions-legales.html">Mentions légales</a></p>
+    </footer>
   </section>
 
   <!-- Écran 2 : Le prix -->

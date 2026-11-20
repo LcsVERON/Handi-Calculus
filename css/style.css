@@ -331,6 +331,37 @@ p.help { margin: 0 0 14px; color: var(--soft); }
   cursor: pointer;
 }
 
+/* ---- Pied de page discret (écran 1) et page des mentions légales ---- */
+.foot {
+  margin-top: 32px;
+  padding-top: 16px;
+  border-top: 2px solid var(--card);
+  color: var(--soft);
+  text-align: center;
+}
+.foot p { margin: 0 0 4px; }
+a { color: var(--ink); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+a:focus-visible { outline: 4px solid var(--act); outline-offset: 3px; border-radius: 4px; }
+.foot a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 56px;
+  padding: 0 12px;
+  color: var(--soft);
+}
+
+.legal h2 { font-size: 26px; margin: 24px 0 6px; }
+.legal p, .legal address { margin: 0 0 10px; font-style: normal; }
+.legal .todo { font-weight: 700; color: var(--no); }
+.legal .retour {
+  display: inline-flex;
+  align-items: center;
+  min-height: 56px;
+  margin-bottom: 8px;
+  font-weight: 700;
+  font-size: 24px;
+}
+
 .hide { display: none; }
 
 @media (prefers-reduced-motion: no-preference) {
