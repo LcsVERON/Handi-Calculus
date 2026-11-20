@@ -1,0 +1,74 @@
+# Publie l'appli sur GitHub Pages à chaque envoi sur la branche main.
+# Seuls les fichiers de l'appli sont publiés (pas docs/, tests/, CLAUDE.md...).
+# Réglage nécessaire : Settings → Pages → Source : « GitHub Actions ».
+
+name: Publier l'appli
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: # bouton « Run workflow » dans l'onglet Actions
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Une seule publication à la fois ; on ne coupe pas une publication en cours.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  publier:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploiement.outputs.page_url }}
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Installer Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Lancer les tests (la publication s'arrête s'ils échouent)
+        run: node --test
+
+      - name: Copier seulement les fichiers de l'appli
+        run: |
+          mkdir _site
+          cp -r index.html mentions-legales.html manifest.webmanifest sw.js \
+                css js fonts icons _site/
+          ls -R _site
+
+      - name: Vérifier que tous les fichiers du service worker sont publiés
+        run: |
+          node <<'EOF'
+          const fs = require('fs');
+          const src = fs.readFileSync('_site/sw.js', 'utf8');
+          const bloc = src.match(/const FICHIERS = (\[[\s\S]*?\]);/);
+          if (!bloc) { console.error('Liste FICHIERS introuvable dans sw.js'); process.exit(1); }
+          const fichiers = new Function('return ' + bloc[1])();
+          const manquants = fichiers.filter((f) => f !== './' && !fs.existsSync('_site/' + f));
+          if (manquants.length) {
+            console.error('Fichiers listés dans sw.js mais absents du site :', manquants);
+            console.error('Ajoute-les dans l\'étape « Copier seulement les fichiers de l\'appli ».');
+            process.exit(1);
+          }
+          console.log(fichiers.length + ' fichiers vérifiés.');
+          EOF
+
+      - name: Configurer GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Préparer le site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Publier
+        id: deploiement
+        uses: actions/deploy-pages@v4
