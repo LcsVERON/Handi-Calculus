@@ -29,6 +29,7 @@
   let prixTexte = '';
   let ecran = 1;
   let texteALire = '';
+  let confirmerVider = false;
 
   function chargerPorteMonnaie() {
     try {
@@ -133,6 +134,7 @@
     } else {
       return;
     }
+    confirmerVider = false; // toucher l'argent annule la question « Tu veux tout enlever ? »
     afficherPorteMonnaie();
     afficherBarre();
   });
@@ -252,10 +254,19 @@
 
   // ---------------------------------------------------------------- Barre du bas
   function afficherBarre() {
-    if (ecran === 1) {
+    barre.classList.toggle('ask', confirmerVider);
+    if (ecran === 1 && confirmerVider) {
+      // Confirmation avant de tout enlever. « Non » est le gros bouton (choix sans risque).
       barre.innerHTML =
-        '<button type="button" class="ghost" id="clr" aria-label="Vider le porte-monnaie">Vider</button>' +
-        '<button type="button" class="big" id="go" aria-label="Suivant : écrire le prix"' + (M.total(porte) ? '' : ' disabled') + '>Suivant →</button>';
+        '<p class="question" id="q-vider">Tu veux tout enlever ?</p>' +
+        '<button type="button" class="ghost" id="clr-oui" aria-describedby="q-vider">✓ Oui</button>' +
+        '<button type="button" class="big" id="clr-non" aria-describedby="q-vider">✗ Non</button>';
+      $('clr-non').focus();
+    } else if (ecran === 1) {
+      const vide = M.total(porte) === 0;
+      barre.innerHTML =
+        '<button type="button" class="ghost" id="clr" aria-label="Vider le porte-monnaie"' + (vide ? ' disabled' : '') + '>Vider</button>' +
+        '<button type="button" class="big" id="go" aria-label="Suivant : écrire le prix"' + (vide ? ' disabled' : '') + '>Suivant →</button>';
     } else if (ecran === 2) {
       barre.innerHTML =
         '<button type="button" class="ghost arrow" id="back" aria-label="Retour à mon argent">←</button>' +
@@ -271,9 +282,18 @@
     const b = e.target.closest('button');
     if (!b || b.disabled) return;
     if (b.id === 'clr') {
+      confirmerVider = true;
+      afficherBarre();
+    } else if (b.id === 'clr-oui') {
+      confirmerVider = false;
       porte = M.porteMonnaieVide();
       afficherPorteMonnaie();
       afficherBarre();
+      $('t1').focus();
+    } else if (b.id === 'clr-non') {
+      confirmerVider = false;
+      afficherBarre();
+      $('t1').focus();
     } else if (b.id === 'go') {
       if (ecran === 1) montrer(2);
       else if (ecran === 2) montrer(3);
@@ -286,6 +306,7 @@
   // ---------------------------------------------------------------- Navigation
   function montrer(n) {
     ecran = n;
+    confirmerVider = false;
     arreterLecture();
     ecrans.forEach(function (v, i) { v.classList.toggle('hide', i + 1 !== n); });
     etapes.forEach(function (s, i) {
@@ -304,4 +325,14 @@
   afficherPorteMonnaie();
   afficherPrix();
   montrer(1);
+
+  // ---------------------------------------------------------------- Hors connexion
+  // Le service worker garde l'appli dans le téléphone (il ne marche qu'en http/https).
+  if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('sw.js').catch(function () {
+        // Pas grave : l'appli marche quand même avec une connexion.
+      });
+    });
+  }
 })();

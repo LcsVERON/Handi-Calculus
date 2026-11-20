@@ -7,6 +7,22 @@
  * TOUCHER : zones de 56 px minimum
  */
 
+/* ---- Police stockée dans l'appli (pas de téléchargement sur internet) ---- */
+@font-face {
+  font-family: "Atkinson Hyperlegible";
+  src: url("../fonts/AtkinsonHyperlegible-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Atkinson Hyperlegible";
+  src: url("../fonts/AtkinsonHyperlegible-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* ---- Couleurs : thème clair ---- */
 :root {
   color-scheme: light dark;
@@ -230,6 +246,18 @@ p.help { margin: 0 0 14px; color: var(--soft); }
   cursor: pointer;
 }
 .ghost.arrow { font-size: 36px; padding: 0 14px; }
+.ghost:disabled { opacity: .35; cursor: default; }
+
+/* Question « Tu veux tout enlever ? » au-dessus des boutons Oui / Non */
+.bar .in.ask { flex-wrap: wrap; }
+.bar .question {
+  flex: 0 0 100%;
+  margin: 0 0 4px;
+  text-align: center;
+  font-size: 26px;
+  font-weight: 700;
+}
+.bar .in.ask .ghost { flex: 1; }
 
 /* ---- Écran 2 : Le prix ---- */
 .price {
