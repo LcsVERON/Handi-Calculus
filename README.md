@@ -16,7 +16,7 @@ Elle n'envoie rien.
 
 ## L'adresse de l'appli
 
-**Adresse : [à compléter]**
+**Adresse : https://lcsveron.github.io/Handi-Calculus/**
 
 ---
 
